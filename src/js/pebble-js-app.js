@@ -8,7 +8,7 @@ var xhrRequest = function (url, type, callback) {
 };
 
 
-function locationSuccess(pos) {
+function Scores(pos) {
   // Construct URL
   var url = "http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp";
 
@@ -27,27 +27,38 @@ function locationSuccess(pos) {
       
       // Collect desired data
       var game_time = "";
+      var period = "";
+      var home_team = "";
+      var away_team = "";
+      var home_score = "";
+      var away_score = "";
       if (gamearraynumber == "No Game"){
         game_time = "No Game";
       }
       else {
         //Game-Info
-        game_time = json.games[gamearraynumber].ts;
+        period = json.games[gamearraynumber].ts + " -";
+        console.log(period);
+        game_time = json.games[gamearraynumber].bs;
         console.log(game_time);
-        var home_team = json.games[gamearraynumber].htn;
+        home_team = json.games[gamearraynumber].htn.substring(0,3).toUpperCase() + ": ";
         console.log(home_team);
-        var away_team = json.games[gamearraynumber].atn;
+        away_team = json.games[gamearraynumber].atn.substring(0,3).toUpperCase() + ": ";
         console.log(away_team);
-        var home_score = json.games[gamearraynumber].hts;
+        home_score = json.games[gamearraynumber].hts;
         console.log(home_score);
-        var away_score = json.games[gamearraynumber].ats;
+        away_score = json.games[gamearraynumber].ats;
         console.log(away_score);
       }
 
       // Assemble dictionary using our keys
       var dictionary = {
-        "KEY_TEMPERATURE": null,
-        "KEY_CONDITIONS": game_time
+        "KEY_PERIOD": period,
+        "KEY_GAME_TIME": game_time,
+        "KEY_HOME_TEAM": home_team,
+        "KEY_HOME_SCORE": home_score,
+        "KEY_AWAY_TEAM": away_team,
+        "KEY_AWAY_SCORE": away_score
       };
 
       // Send to Pebble
@@ -63,29 +74,19 @@ function locationSuccess(pos) {
   );
 }
 
-function locationError(err) {
-  console.log("Error requesting location!");
-}
 
 function findLeafs(json) {
   for(var i=0; i < json.games.length; i++){
-    if ((json.games[i].htn == "Calgary") && ((json.games[i].ts == "TODAY")||(json.games[i].tsc == "progress"))){
+    if ((json.games[i].htn == "Toronto") && ((json.games[i].ts == "TODAY")||(json.games[i].tsc == "progress"))){
       return i;
     }
-    if ((json.games[i].atn == "Calgary") && ((json.games[i].ts == "TODAY")||(json.games[i].tsc == "progress"))){
+    if ((json.games[i].atn == "Toronto") && ((json.games[i].ts == "TODAY")||(json.games[i].tsc == "progress"))){
       return i;
     }
   }
       return "No Game";
 }
 
-function getWeather() {
-  navigator.geolocation.getCurrentPosition(
-    locationSuccess,
-    locationError,
-    {timeout: 15000, maximumAge: 60000}
-  );
-}
 
 // Listen for when the watchface is opened
 Pebble.addEventListener('ready', 
@@ -93,7 +94,7 @@ Pebble.addEventListener('ready',
     console.log("PebbleKit JS ready!");
 
     // Get the initial weather
-    getWeather();
+    Scores();
   }
 );
 
@@ -101,6 +102,6 @@ Pebble.addEventListener('ready',
 Pebble.addEventListener('appmessage',
   function(e) {
     console.log("AppMessage received!");
-    getWeather();
+    Scores();
   }                     
 );

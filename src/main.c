@@ -1,14 +1,20 @@
 #include <pebble.h>
   
-#define KEY_TEMPERATURE 0
-#define KEY_CONDITIONS 1
+#define KEY_PERIOD 0
+#define KEY_GAME_TIME 1
+#define KEY_HOME_TEAM 2
+#define KEY_HOME_SCORE 3
+#define KEY_AWAY_TEAM 4
+#define KEY_AWAY_SCORE 5
   
 static Window *s_main_window;
 static TextLayer *s_time_layer;
-static TextLayer *s_weather_layer;
+static TextLayer *s_game_layer;
+static TextLayer *s_home_layer;
+static TextLayer *s_away_layer;
 
 static GFont s_time_font;
-static GFont s_weather_font;
+static GFont s_data_font;
 
 static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap;
@@ -29,6 +35,10 @@ static void update_time() {
     //Use 12 hour format
     strftime(buffer, sizeof("00:00"), "%I:%M", tick_time);
   }
+  
+  if (!clock_is_24h_style() && buffer[0] == '0') {
+    memmove(buffer, &buffer[1], sizeof(buffer) - 1);
+  }
 
   // Display this time on the TextLayer
   text_layer_set_text(s_time_layer, buffer);
@@ -36,19 +46,19 @@ static void update_time() {
 
 static void main_window_load(Window *window) {
   //Create GBitmap, then set to created BitmapLayer
-  s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
+  s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_ONE);
   s_background_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
   bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_background_layer));
   
   // Create time TextLayer
-  s_time_layer = text_layer_create(GRect(5, 52, 139, 50));
+  s_time_layer = text_layer_create(GRect(5, 0, 139, 50));
   text_layer_set_background_color(s_time_layer, GColorClear);
-  text_layer_set_text_color(s_time_layer, GColorBlack);
+  text_layer_set_text_color(s_time_layer, GColorWhite);
   text_layer_set_text(s_time_layer, "00:00");
   
   //Create GFont
-  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PERFECT_DOS_48));
+  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_SCRATCH_40));
 
   //Apply to TextLayer
   text_layer_set_font(s_time_layer, s_time_font);
@@ -57,17 +67,36 @@ static void main_window_load(Window *window) {
   // Add it as a child layer to the Window's root layer
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_time_layer));
   
-  // Create temperature Layer
-  s_weather_layer = text_layer_create(GRect(0, 130, 144, 25));
-  text_layer_set_background_color(s_weather_layer, GColorClear);
-  text_layer_set_text_color(s_weather_layer, GColorWhite);
-  text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
-  text_layer_set_text(s_weather_layer, "Loading...");
+  // Create Game Layer
+  s_game_layer = text_layer_create(GRect(0, 115, 144, 25));
+  text_layer_set_background_color(s_game_layer, GColorClear);
+  text_layer_set_text_color(s_game_layer, GColorWhite);
+  text_layer_set_text_alignment(s_game_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_game_layer, "Loading...");
   
   // Create second custom font, apply it and add to Window
-  s_weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PERFECT_DOS_20));
-  text_layer_set_font(s_weather_layer, s_weather_font);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_weather_layer));
+  s_data_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_SCRATCH_14));
+  text_layer_set_font(s_game_layer, s_data_font);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_game_layer));
+  
+  // Create Home Team Layer
+  s_home_layer = text_layer_create(GRect(5, 130, 144, 25));
+  text_layer_set_background_color(s_home_layer, GColorClear);
+  text_layer_set_text_color(s_home_layer, GColorWhite);
+  text_layer_set_text_alignment(s_home_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_home_layer, "");
+  text_layer_set_font(s_home_layer, s_data_font);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_home_layer));
+  
+  // Create Away Team Layer
+  s_away_layer = text_layer_create(GRect(5, 145, 144, 25));
+  text_layer_set_background_color(s_away_layer, GColorClear);
+  text_layer_set_text_color(s_away_layer, GColorWhite);
+  text_layer_set_text_alignment(s_away_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_away_layer, "");
+  text_layer_set_font(s_away_layer, s_data_font);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_away_layer));
+  
   
   // Make sure the time is displayed from the start
   update_time();
@@ -76,6 +105,7 @@ static void main_window_load(Window *window) {
 static void main_window_unload(Window *window) {
   //Unload GFont
   fonts_unload_custom_font(s_time_font);
+  fonts_unload_custom_font(s_data_font);
   
   //Destroy GBitmap
   gbitmap_destroy(s_background_bitmap);
@@ -85,17 +115,16 @@ static void main_window_unload(Window *window) {
   
   // Destroy TextLayer
   text_layer_destroy(s_time_layer);
+  text_layer_destroy(s_game_layer);
+  text_layer_destroy(s_home_layer);
   
-  // Destroy weather elements
-  text_layer_destroy(s_weather_layer);
-  fonts_unload_custom_font(s_weather_font);
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   update_time();
   
-  // Get weather update every 30 minutes
-  if(tick_time->tm_min % 30 == 0) {
+  // Get score update every 5 minutes
+  if(tick_time->tm_min % 5 == 0) {
     // Begin dictionary
     DictionaryIterator *iter;
     app_message_outbox_begin(&iter);
@@ -110,9 +139,17 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   // Store incoming information
-  static char temperature_buffer[8];
-  static char conditions_buffer[32];
-  static char weather_layer_buffer[32];
+  static char period_buffer[32];
+  static char game_time_buffer[32];
+  static char game_layer_buffer[32];
+  
+  static char home_team_buffer[32];
+  static char home_score_buffer[32];
+  static char home_layer_buffer[32];
+  
+  static char away_team_buffer[32];
+  static char away_score_buffer[32];
+  static char away_layer_buffer[32];
   
   // Read first item
   Tuple *t = dict_read_first(iterator);
@@ -121,11 +158,23 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   while(t != NULL) {
     // Which key was received?
     switch(t->key) {
-    case KEY_TEMPERATURE:
-      snprintf(temperature_buffer, sizeof(temperature_buffer), "%dC", (int)t->value->int32);
+    case KEY_PERIOD:
+      snprintf(period_buffer, sizeof(period_buffer), "%s", t->value->cstring);
       break;
-    case KEY_CONDITIONS:
-      snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", t->value->cstring);
+    case KEY_GAME_TIME:
+      snprintf(game_time_buffer, sizeof(game_time_buffer), "%s", t->value->cstring);
+      break;
+    case KEY_HOME_TEAM:
+      snprintf(home_team_buffer, sizeof(home_team_buffer), "%s", t->value->cstring);
+      break;
+    case KEY_HOME_SCORE:
+      snprintf(home_score_buffer, sizeof(home_score_buffer), "%s", t->value->cstring);
+      break;
+    case KEY_AWAY_TEAM:
+      snprintf(away_team_buffer, sizeof(away_team_buffer), "%s", t->value->cstring);
+      break;
+    case KEY_AWAY_SCORE:
+      snprintf(away_score_buffer, sizeof(away_score_buffer), "%s", t->value->cstring);
       break;
     default:
       APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized!", (int)t->key);
@@ -137,8 +186,14 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   }
   
   // Assemble full string and display
-  snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s, %s", temperature_buffer, conditions_buffer);
-  text_layer_set_text(s_weather_layer, weather_layer_buffer);
+  snprintf(game_layer_buffer, sizeof(game_layer_buffer), "%s %s", period_buffer, game_time_buffer);
+  text_layer_set_text(s_game_layer, game_layer_buffer);
+  
+  snprintf(home_layer_buffer, sizeof(home_layer_buffer), "%s %s", home_team_buffer, home_score_buffer);
+  text_layer_set_text(s_home_layer, home_layer_buffer);
+  
+  snprintf(away_layer_buffer, sizeof(away_layer_buffer), "%s %s", away_team_buffer, away_score_buffer);
+  text_layer_set_text(s_away_layer, away_layer_buffer);
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {

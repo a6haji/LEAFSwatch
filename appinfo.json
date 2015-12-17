@@ -1,7 +1,11 @@
 {
     "appKeys": {
-        "KEY_CONDITIONS": 1,
-        "KEY_TEMPERATURE": 0
+        "KEY_AWAY_SCORE": 5,
+        "KEY_AWAY_TEAM": 4,
+        "KEY_GAME_TIME": 1,
+        "KEY_HOME_SCORE": 3,
+        "KEY_HOME_TEAM": 2,
+        "KEY_PERIOD": 0
     },
     "capabilities": [
         "location"
@@ -12,28 +16,46 @@
     "resources": {
         "media": [
             {
-                "file": "images/background.png",
-                "name": "IMAGE_BACKGROUND",
+                "file": "fonts/Alphahate.ttf",
+                "name": "FONT_SCRATCH_14",
+                "targetPlatforms": null,
+                "type": "font"
+            },
+            {
+                "file": "fonts/Alphahate.ttf",
+                "name": "FONT_SCRATCH_40",
+                "targetPlatforms": null,
+                "type": "font"
+            },
+            {
+                "file": "images/LeafsLogo1.png",
+                "name": "IMAGE_BACKGROUND_ONE",
+                "targetPlatforms": null,
                 "type": "png"
             },
             {
                 "compatibility": "2.7",
                 "file": "fonts/perfect-dos-vga.ttf",
-                "name": "FONT_PERFECT_DOS_20",
+                "name": "FONT_PERFECT_DOS_14",
+                "targetPlatforms": null,
                 "type": "font"
             },
             {
                 "compatibility": "2.7",
                 "file": "fonts/perfect-dos-vga.ttf",
-                "name": "FONT_PERFECT_DOS_48",
+                "name": "FONT_PERFECT_DOS_35",
+                "targetPlatforms": null,
                 "type": "font"
             }
         ]
     },
-    "sdkVersion": "2",
+    "sdkVersion": "3",
     "shortName": "Tutorial-3-3",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
     "uuid": "59493f8c-b530-42a4-84f5-440df91173f2",
-    "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
         "watchface": true
