@@ -16,6 +16,12 @@
     "resources": {
         "media": [
             {
+                "file": "images/LeafsLogo.png",
+                "name": "IMAGE_BACKGROUND_ONE",
+                "targetPlatforms": null,
+                "type": "png"
+            },
+            {
                 "file": "fonts/Alphahate.ttf",
                 "name": "FONT_SCRATCH_14",
                 "targetPlatforms": null,
@@ -24,26 +30,6 @@
             {
                 "file": "fonts/Alphahate.ttf",
                 "name": "FONT_SCRATCH_40",
-                "targetPlatforms": null,
-                "type": "font"
-            },
-            {
-                "file": "images/LeafsLogo1.png",
-                "name": "IMAGE_BACKGROUND_ONE",
-                "targetPlatforms": null,
-                "type": "png"
-            },
-            {
-                "compatibility": "2.7",
-                "file": "fonts/perfect-dos-vga.ttf",
-                "name": "FONT_PERFECT_DOS_14",
-                "targetPlatforms": null,
-                "type": "font"
-            },
-            {
-                "compatibility": "2.7",
-                "file": "fonts/perfect-dos-vga.ttf",
-                "name": "FONT_PERFECT_DOS_35",
                 "targetPlatforms": null,
                 "type": "font"
             }

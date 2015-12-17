@@ -7,6 +7,11 @@ var xhrRequest = function (url, type, callback) {
   xhr.send();
 };
 
+// Get the Day of the Week
+  var date = new Date();
+  var weekdays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  var today = weekdays[date.getDay()];
+
 
 function Scores(pos) {
   // Construct URL
@@ -19,11 +24,9 @@ function Scores(pos) {
       var jsonText = responseText.substring(15, responseText.length - 1);
       console.log("This is cut json:" + jsonText);
       var json = JSON.parse(jsonText);
-      console.log("This is parsed json:" + json);
       
       // Find the desired game array
       var gamearraynumber = findLeafs(json);
-      console.log(gamearraynumber);
       
       // Collect desired data
       var game_time = "";
@@ -32,12 +35,16 @@ function Scores(pos) {
       var away_team = "";
       var home_score = "";
       var away_score = "";
+
       if (gamearraynumber == "No Game"){
         game_time = "No Game";
       }
       else {
         //Game-Info
         period = json.games[gamearraynumber].ts + " -";
+        if (period.substring(0,3) == today){
+          period = " ";
+        }
         console.log(period);
         game_time = json.games[gamearraynumber].bs;
         console.log(game_time);
@@ -74,19 +81,17 @@ function Scores(pos) {
   );
 }
 
-
 function findLeafs(json) {
   for(var i=0; i < json.games.length; i++){
-    if ((json.games[i].htn == "Toronto") && ((json.games[i].ts == "TODAY")||(json.games[i].tsc == "progress"))){
+    if ((json.games[i].htn == "Toronto") && ((json.games[i].ts == "TODAY")||(json.games[i].tsc == "progress")||(json.games[i].tsc == "critical")||(today === json.games[i].ts.substring(0,3)))){
       return i;
     }
-    if ((json.games[i].atn == "Toronto") && ((json.games[i].ts == "TODAY")||(json.games[i].tsc == "progress"))){
+    if ((json.games[i].atn == "Toronto") && ((json.games[i].ts == "TODAY")||(json.games[i].tsc == "progress")||(json.games[i].tsc == "critical")||(today === json.games[i].ts.substring(0,3)))){
       return i;
     }
   }
       return "No Game";
 }
-
 
 // Listen for when the watchface is opened
 Pebble.addEventListener('ready', 
