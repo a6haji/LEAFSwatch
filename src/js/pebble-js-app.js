@@ -83,10 +83,18 @@ function Scores(pos) {
 
 function findLeafs(json) {
   for(var i=0; i < json.games.length; i++){
-    if ((json.games[i].htn == "Toronto") && ((json.games[i].ts == "TODAY")||(json.games[i].tsc == "progress")||(json.games[i].tsc == "critical")||(today === json.games[i].ts.substring(0,3)))){
+    if ((json.games[i].htn == "Toronto") && 
+        ((json.games[i].ts == "TODAY") ||
+         (json.games[i].tsc == "progress") ||
+         (json.games[i].tsc == "critical") ||
+         (today === json.games[i].ts.substring(0,3)))){
       return i;
     }
-    if ((json.games[i].atn == "Toronto") && ((json.games[i].ts == "TODAY")||(json.games[i].tsc == "progress")||(json.games[i].tsc == "critical")||(today === json.games[i].ts.substring(0,3)))){
+    if ((json.games[i].atn == "Toronto") && 
+        ((json.games[i].ts == "TODAY") ||
+         (json.games[i].tsc == "progress") ||
+         (json.games[i].tsc == "critical") ||
+         (today === json.games[i].ts.substring(0,3)))){
       return i;
     }
   }
