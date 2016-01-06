@@ -11,7 +11,7 @@
         "location"
     ],
     "companyName": "Pebble",
-    "longName": "Tutorial-3-3",
+    "longName": "LEAFS WATCH",
     "projectType": "native",
     "resources": {
         "media": [
@@ -36,7 +36,7 @@
         ]
     },
     "sdkVersion": "3",
-    "shortName": "Tutorial-3-3",
+    "shortName": "LEAFS",
     "targetPlatforms": [
         "aplite",
         "basalt"
