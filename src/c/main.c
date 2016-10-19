@@ -45,20 +45,24 @@ static void update_time() {
 }
 
 static void main_window_load(Window *window) {
+  //Get info about the Window
+  Layer *window_layer = window_get_root_layer(window);
+  GRect bounds = layer_get_bounds(window_layer);
+  
   //Create GBitmap, then set to created BitmapLayer
-  s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_ONE);
-  s_background_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+  s_background_bitmap = gbitmap_create_with_resource(PBL_IF_ROUND_ELSE(RESOURCE_ID_IMAGE_BACKGROUND_TWO, RESOURCE_ID_IMAGE_BACKGROUND_ONE));
+  s_background_layer = bitmap_layer_create(bounds);
   bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_background_layer));
   
   // Create time TextLayer
-  s_time_layer = text_layer_create(GRect(5, 0, 139, 50));
+  s_time_layer = text_layer_create(GRect (PBL_IF_ROUND_ELSE(22, 5), PBL_IF_ROUND_ELSE(8, 0), 139, 50));
   text_layer_set_background_color(s_time_layer, GColorClear);
   text_layer_set_text_color(s_time_layer, GColorWhite);
   text_layer_set_text(s_time_layer, "00:00");
   
   //Create GFont
-  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_SCRATCH_40));
+  s_time_font = fonts_load_custom_font(resource_get_handle(PBL_IF_ROUND_ELSE(RESOURCE_ID_FONT_SCRATCH_30, RESOURCE_ID_FONT_SCRATCH_40)));
 
   //Apply to TextLayer
   text_layer_set_font(s_time_layer, s_time_font);
@@ -68,19 +72,19 @@ static void main_window_load(Window *window) {
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_time_layer));
   
   // Create Game Layer
-  s_game_layer = text_layer_create(GRect(0, 115, 144, 25));
+  s_game_layer = text_layer_create(GRect(PBL_IF_ROUND_ELSE(15, 0), PBL_IF_ROUND_ELSE(127, 115), 144, 25));
   text_layer_set_background_color(s_game_layer, GColorClear);
   text_layer_set_text_color(s_game_layer, GColorWhite);
   text_layer_set_text_alignment(s_game_layer, GTextAlignmentCenter);
   text_layer_set_text(s_game_layer, "Loading...");
   
   // Create second custom font, apply it and add to Window
-  s_data_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_SCRATCH_14));
+  s_data_font = fonts_load_custom_font(resource_get_handle(PBL_IF_ROUND_ELSE(RESOURCE_ID_FONT_SCRATCH_12, RESOURCE_ID_FONT_SCRATCH_14)));
   text_layer_set_font(s_game_layer, s_data_font);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_game_layer));
   
   // Create Home Team Layer
-  s_home_layer = text_layer_create(GRect(5, 130, 144, 25));
+  s_home_layer = text_layer_create(GRect(PBL_IF_ROUND_ELSE(15, 5), PBL_IF_ROUND_ELSE(142, 130), 144, 25));
   text_layer_set_background_color(s_home_layer, GColorClear);
   text_layer_set_text_color(s_home_layer, GColorWhite);
   text_layer_set_text_alignment(s_home_layer, GTextAlignmentCenter);
@@ -89,7 +93,7 @@ static void main_window_load(Window *window) {
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_home_layer));
   
   // Create Away Team Layer
-  s_away_layer = text_layer_create(GRect(5, 145, 144, 25));
+  s_away_layer = text_layer_create(GRect(PBL_IF_ROUND_ELSE(15, 5), PBL_IF_ROUND_ELSE(157, 145), 144, 25));
   text_layer_set_background_color(s_away_layer, GColorClear);
   text_layer_set_text_color(s_away_layer, GColorWhite);
   text_layer_set_text_alignment(s_away_layer, GTextAlignmentCenter);
